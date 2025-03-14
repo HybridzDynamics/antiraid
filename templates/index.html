@@ -1,0 +1,1130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-Raid & Anti-Nuke Bot Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #7289DA;
+            --secondary: #2C2F33;
+            --dark: #23272A;
+            --light: #FFFFFF;
+            --danger: #ED4245;
+            --success: #57F287;
+            --warning: #FEE75C;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background-color: var(--secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary) !important;
+        }
+        
+        .card {
+            background-color: var(--secondary);
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-header {
+            background-color: rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .table {
+            color: var(--light);
+        }
+        
+        .table td, .table th {
+            border-color: rgba(255, 255, 255, 0.1);
+            padding: 12px 15px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            border-color: var(--danger);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+        
+        .badge-active {
+            background-color: var(--success);
+            color: #000;
+        }
+        
+        .badge-inactive {
+            background-color: var(--danger);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .status-online {
+            background-color: var(--success);
+        }
+        
+        .status-lockdown {
+            background-color: var(--danger);
+        }
+        
+        #server-stats {
+            padding: 15px;
+        }
+        
+        .stat-card {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-card.primary {
+            background-color: rgba(114, 137, 218, 0.2);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .stat-card.danger {
+            background-color: rgba(237, 66, 69, 0.2);
+            border-left: 4px solid var(--danger);
+        }
+        
+        .stat-card.success {
+            background-color: rgba(87, 242, 135, 0.2);
+            border-left: 4px solid var(--success);
+        }
+        
+        .stat-card.warning {
+            background-color: rgba(254, 231, 92, 0.2);
+            border-left: 4px solid var(--warning);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .nav-tabs {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-tabs .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            border-bottom: 3px solid rgba(114, 137, 218, 0.5);
+            color: var(--light);
+        }
+        
+        .nav-tabs .nav-link.active {
+            background-color: transparent;
+            color: var(--primary);
+            border-color: transparent;
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .btn {
+            border-radius: 4px;
+            font-weight: 500;
+            padding: 8px 16px;
+        }
+        
+        .settings-section {
+            margin-bottom: 30px;
+        }
+        
+        .admin-badge {
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 5px;
+            background-color: rgba(114, 137, 218, 0.2);
+            border: 1px solid rgba(114, 137, 218, 0.5);
+        }
+        
+        .form-control, .form-select {
+            background-color: var(--dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background-color: var(--dark);
+            color: var(--light);
+            box-shadow: 0 0 0 0.25rem rgba(114, 137, 218, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-shield-alt me-2"></i> Anti-Raid & Anti-Nuke Bot
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            <div class="status-indicator" id="bot-status-indicator"></div>
+                            <span id="bot-status-text">Connecting...</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>Server Security Dashboard</h2>
+                    <div>
+                        <button id="unlockButton" class="btn btn-success me-2" style="display: none;">
+                            <i class="fas fa-unlock me-1"></i> Unlock Server
+                        </button>
+                        <button id="lockdownButton" class="btn btn-danger">
+                            <i class="fas fa-lock me-1"></i> Lockdown Server
+                        </button>
+                    </div>
+                </div>
+                <p class="text-muted">Manage your server's security settings and monitor activity</p>
+            </div>
+        </div>
+
+        <div class="row mb-4" id="server-stats">
+            <div class="col-md-3">
+                <div class="stat-card primary">
+                    <h6><i class="fas fa-shield-alt me-2"></i> Security Status</h6>
+                    <div class="stat-value" id="securityStatus">Secure</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card success">
+                    <h6><i class="fas fa-user-shield me-2"></i> Trusted Admins</h6>
+                    <div class="stat-value" id="adminCount">{{ admin_count }}</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card warning">
+                    <h6><i class="fas fa-user-times me-2"></i> Recent Joins</h6>
+                    <div class="stat-value" id="recentJoins">0</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card danger">
+                    <h6><i class="fas fa-user-slash me-2"></i> Suspicious Users</h6>
+                    <div class="stat-value" id="suspiciousCount">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                            <i class="fas fa-tachometer-alt me-1"></i> Overview
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab">
+                            <i class="fas fa-list-alt me-1"></i> Security Logs
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                            <i class="fas fa-cog me-1"></i> Settings
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="admins-tab" data-bs-toggle="tab" data-bs-target="#admins" type="button" role="tab">
+                            <i class="fas fa-user-shield me-1"></i> Admin Management
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab">
+                            <i class="fas fa-users me-1"></i> Members
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="channels-tab" data-bs-toggle="tab" data-bs-target="#channels" type="button" role="tab">
+                            <i class="fas fa-hashtag me-1"></i> Channels
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="roles-tab" data-bs-toggle="tab" data-bs-target="#roles" type="button" role="tab">
+                            <i class="fas fa-tags me-1"></i> Roles
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tab-content">
+            <!-- Overview Tab -->
+            <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-shield-alt me-2"></i> Security Status
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <h5>Server Configuration</h5>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Lockdown Status</td>
+                                                    <td>
+                                                        <span id="lockdownStatus" class="badge rounded-pill" data-status="{{ settings.lockdown_active }}">
+                                                            {% if settings.lockdown_active == 'true' %}
+                                                                <span class="badge-inactive">Active</span>
+                                                            {% else %}
+                                                                <span class="badge-active">Inactive</span>
+                                                            {% endif %}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Invites</td>
+                                                    <td>
+                                                        <span id="invitesStatus" class="badge rounded-pill" data-status="{{ settings.invites_enabled }}">
+                                                            {% if settings.invites_enabled == 'true' %}
+                                                                <span class="badge-active">Enabled</span>
+                                                            {% else %}
+                                                                <span class="badge-inactive">Disabled</span>
+                                                            {% endif %}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Join Rate Limit</td>
+                                                    <td><span id="joinRateLimit">{{ settings.join_rate_limit }} users per {{ settings.join_rate_window }} seconds</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Minimum Account Age</td>
+                                                    <td><span id="minAccountAge">{{ settings.min_account_age }} days</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Bot Application ID</td>
+                                                    <td>1349769656549773342</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Server ID</td>
+                                                    <td>1200823287186473101</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-user-shield me-2"></i> Trusted Admins
+                            </div>
+                            <div class="card-body">
+                                <div id="admin-list">
+                                    <div class="admin-badge"><i class="fas fa-user-shield me-1"></i> Rhys (718077967502278732)</div>
+                                    <div class="admin-badge"><i class="fas fa-user-shield me-1"></i> Bx (977963761627447388)</div>
+                                    <div class="admin-badge"><i class="fas fa-user-shield me-1"></i> Jordan (1220738458520387777)</div>
+                                    <div class="admin-badge"><i class="fas fa-user-shield me-1"></i> Hybridz (1062619190063808532)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-bell me-2"></i> Recent Activity
+                            </div>
+                            <div class="card-body">
+                                <div id="recent-activity" class="small">
+                                    <!-- Recent activity will be populated by JavaScript -->
+                                    <p><i class="far fa-clock me-1"></i> Loading recent activity...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Tab -->
+            <div class="tab-pane fade" id="logs" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-list-alt me-2"></i> Security Logs
+                            </div>
+                            <div>
+                                <button id="refreshLogs" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="logsTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Action</th>
+                                        <th>User</th>
+                                        <th>Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for log in logs %}
+                                    <tr>
+                                        <td>{{ log[0] }}</td>
+                                        <td>{{ log[1] }}</td>
+                                        <td>{{ log[2] }}</td>
+                                        <td>{{ log[3] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-pane fade" id="settings" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-cog me-2"></i> Security Settings
+                    </div>
+                    <div class="card-body">
+                        <form id="settingsForm">
+                            <div class="settings-section">
+                                <h5>Join Rate Limiting</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="joinRateLimitInput" class="form-label">Max joins</label>
+                                        <input type="number" class="form-control" id="joinRateLimitInput" value="{{ settings.join_rate_limit }}">
+                                        <div class="form-text text-light">Maximum number of users that can join in the time window</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="joinRateWindowInput" class="form-label">Time window (seconds)</label>
+                                        <input type="number" class="form-control" id="joinRateWindowInput" value="{{ settings.join_rate_window }}">
+                                        <div class="form-text text-light">Time window in seconds to track joins</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-section">
+                                <h5>Account Age Verification</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="minAccountAgeInput" class="form-label">Minimum account age (days)</label>
+                                        <input type="number" class="form-control" id="minAccountAgeInput" value="{{ settings.min_account_age }}">
+                                        <div class="form-text text-light">Accounts younger than this will be considered suspicious</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-section">
+                                <h5>Invites Management</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="invitesEnabledInput" {% if settings.invites_enabled == 'true' %}checked{% endif %}>
+                                            <label class="form-check-label" for="invitesEnabledInput">Allow new invites</label>
+                                        </div>
+                                        <div class="form-text text-light">Enable or disable the creation of new invites</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Save Settings
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Management Tab -->
+            <div class="tab-pane fade" id="admins" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-user-shield me-2"></i> Trusted Admins Management
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>Add New Admin</h5>
+                                <form id="addAdminForm" class="row g-3">
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" id="newAdminId" placeholder="User ID">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-plus me-1"></i> Add
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <h5>Current Trusted Admins</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="adminsTable">
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Admin list will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Members Tab -->
+            <div class="tab-pane fade" id="members" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-users me-2"></i> Server Members
+                            </div>
+                            <div>
+                                <button id="refreshMembers" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="membersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Avatar</th>
+                                        <th>Display Name</th>
+                                        <th>Username</th>
+                                        <th>Roles</th>
+                                        <th>Joined</th>
+                                        <th>Account Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Members will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Channels Tab -->
+            <div class="tab-pane fade" id="channels" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-hashtag me-2"></i> Server Channels
+                            </div>
+                            <div>
+                                <button id="refreshChannels" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="channelsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Position</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Channels will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Roles Tab -->
+            <div class="tab-pane fade" id="roles" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-tags me-2"></i> Server Roles
+                            </div>
+                            <div>
+                                <button id="refreshRoles" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="rolesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Color</th>
+                                        <th>Name</th>
+                                        <th>Members</th>
+                                        <th>Position</th>
+                                        <th>Hoisted</th>
+                                        <th>Mentionable</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Roles will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initial page load
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshData();
+            setInterval(refreshData, 5000); // Refresh data every 5 seconds
+            
+            // Setup event listeners
+            document.getElementById('lockdownButton').addEventListener('click', lockdownServer);
+            document.getElementById('unlockButton').addEventListener('click', unlockServer);
+            document.getElementById('refreshLogs').addEventListener('click', refreshLogs);
+            document.getElementById('settingsForm').addEventListener('submit', saveSettings);
+            document.getElementById('addAdminForm').addEventListener('submit', addAdmin);
+            document.getElementById('refreshMembers').addEventListener('click', fetchMembers);
+            document.getElementById('refreshChannels').addEventListener('click', fetchChannels);
+            document.getElementById('refreshRoles').addEventListener('click', fetchRoles);
+            
+            // Setup tab change listeners
+            document.getElementById('members-tab').addEventListener('click', fetchMembers);
+            document.getElementById('channels-tab').addEventListener('click', fetchChannels);
+            document.getElementById('roles-tab').addEventListener('click', fetchRoles);
+            
+            updateLockdownUI();
+            fetchAdmins();
+            fetchServerInfo();
+        });
+        
+        // Refresh all data
+        function refreshData() {
+            refreshLogs();
+            updateRecentJoins();
+            console.log("Data refreshed");
+        }
+        
+        // Update UI based on lockdown status
+        function updateLockdownUI() {
+            const lockdownStatus = document.getElementById('lockdownStatus').dataset.status;
+            if (lockdownStatus === 'true') {
+                document.getElementById('lockdownButton').style.display = 'none';
+                document.getElementById('unlockButton').style.display = 'inline-block';
+                document.getElementById('securityStatus').textContent = 'Lockdown';
+                document.getElementById('securityStatus').parentElement.classList.remove('primary');
+                document.getElementById('securityStatus').parentElement.classList.add('danger');
+                document.getElementById('bot-status-indicator').classList.remove('status-online');
+                document.getElementById('bot-status-indicator').classList.add('status-lockdown');
+                document.getElementById('bot-status-text').textContent = 'Lockdown Active';
+            } else {
+                document.getElementById('lockdownButton').style.display = 'inline-block';
+                document.getElementById('unlockButton').style.display = 'none';
+                document.getElementById('securityStatus').textContent = 'Secure';
+                document.getElementById('securityStatus').parentElement.classList.remove('danger');
+                document.getElementById('securityStatus').parentElement.classList.add('primary');
+                document.getElementById('bot-status-indicator').classList.remove('status-lockdown');
+                document.getElementById('bot-status-indicator').classList.add('status-online');
+                document.getElementById('bot-status-text').textContent = 'Online';
+            }
+        }
+        
+        // Get current admin ID
+        function getCurrentAdminId() {
+            // In a real implementation, you would get this from a login session
+            // For now, let's use a default trusted admin ID (Rhys's ID)
+            return '718077967502278732';
+        }
+        
+        // Lockdown server
+        function lockdownServer() {
+            const adminId = getCurrentAdminId();
+            fetch(`/lockdown?admin_id=${adminId}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('lockdownStatus').dataset.status = 'true';
+                    document.getElementById('lockdownStatus').innerHTML = '<span class="badge-inactive">Active</span>';
+                    updateLockdownUI();
+                    setTimeout(refreshLogs, 1000);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to lock down server. See console for details.');
+            });
+        }
+        
+        // Unlock server
+        function unlockServer() {
+            const adminId = getCurrentAdminId();
+            fetch(`/unlock?admin_id=${adminId}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('lockdownStatus').dataset.status = 'false';
+                    document.getElementById('lockdownStatus').innerHTML = '<span class="badge-active">Inactive</span>';
+                    updateLockdownUI();
+                    setTimeout(refreshLogs, 1000);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to unlock server. See console for details.');
+            });
+        }
+        
+        // Refresh security logs
+        function refreshLogs() {
+            fetch('/api/logs')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector('#logsTable tbody');
+                tbody.innerHTML = '';
+                
+                data.forEach(log => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${log.id}</td>
+                        <td>${log.action}</td>
+                        <td>${log.user}</td>
+                        <td>${log.timestamp}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                // Update recent activity in the overview tab
+                const recentActivity = document.getElementById('recent-activity');
+                recentActivity.innerHTML = '';
+                
+                // Show the 5 most recent logs
+                for (let i = 0; i < Math.min(5, data.length); i++) {
+                    const log = data[i];
+                    const activityItem = document.createElement('p');
+                    activityItem.innerHTML = `<i class="far fa-clock me-1"></i> ${log.action} by ${log.user}`;
+                    recentActivity.appendChild(activityItem);
+                }
+            });
+        }
+        
+        // Update recent joins count
+        function updateRecentJoins() {
+            // This is a placeholder. In a real implementation, you'd fetch this data from an API
+            const randomJoins = Math.floor(Math.random() * 10); // Simulated value
+            document.getElementById('recentJoins').textContent = randomJoins;
+            
+            // Simulated suspicious count (in a real app, this would come from the server)
+            const suspiciousCount = Math.floor(randomJoins * 0.3);
+            document.getElementById('suspiciousCount').textContent = suspiciousCount;
+        }
+        
+        // Save settings
+        function saveSettings(e) {
+            e.preventDefault();
+            
+            const settings = {
+                join_rate_limit: document.getElementById('joinRateLimitInput').value,
+                join_rate_window: document.getElementById('joinRateWindowInput').value,
+                min_account_age: document.getElementById('minAccountAgeInput').value,
+                invites_enabled: document.getElementById('invitesEnabledInput').checked ? 'true' : 'false'
+            };
+            
+            const adminId = getCurrentAdminId();
+            fetch(`/api/settings?admin_id=${adminId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(settings)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update displayed values
+                    document.getElementById('joinRateLimit').textContent = 
+                        settings.join_rate_limit + ' users per ' + settings.join_rate_window + ' seconds';
+                    document.getElementById('minAccountAge').textContent = settings.min_account_age + ' days';
+                    
+                    // Update invites status badge
+                    const invitesStatus = document.getElementById('invitesStatus');
+                    invitesStatus.dataset.status = settings.invites_enabled;
+                    if (settings.invites_enabled === 'true') {
+                        invitesStatus.innerHTML = '<span class="badge-active">Enabled</span>';
+                    } else {
+                        invitesStatus.innerHTML = '<span class="badge-inactive">Disabled</span>';
+                    }
+                    
+                    // Show success alert
+                    alert('Settings saved successfully!');
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to save settings'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to save settings. See console for details.');
+            });
+        }
+        
+        // Fetch admin list
+        function fetchAdmins() {
+            fetch('/api/admins')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector('#adminsTable tbody');
+                tbody.innerHTML = '';
+                
+                data.admins.forEach(adminId => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${adminId}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger remove-admin" data-id="${adminId}">
+                                <i class="fas fa-trash me-1"></i> Remove
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.remove-admin').forEach(button => {
+                    button.addEventListener('click', function() {
+                        removeAdmin(this.dataset.id);
+                    });
+                });
+            });
+        }
+        
+        // Add a new admin
+        function addAdmin(e) {
+            e.preventDefault();
+            
+            const userId = document.getElementById('newAdminId').value.trim();
+            if (!userId) return;
+            
+            const adminId = getCurrentAdminId();
+            fetch(`/api/admins?admin_id=${adminId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: userId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Clear input
+                    document.getElementById('newAdminId').value = '';
+                    
+                    // Refresh admin list
+                    fetchAdmins();
+                    
+                    // Update admin count
+                    const adminCount = document.getElementById('adminCount');
+                    adminCount.textContent = parseInt(adminCount.textContent) + 1;
+                    
+                    // Add to the overview admin list
+                    const adminList = document.getElementById('admin-list');
+                    const newAdminBadge = document.createElement('div');
+                    newAdminBadge.className = 'admin-badge';
+                    newAdminBadge.innerHTML = `<i class="fas fa-user-shield me-1"></i> ${userId}`;
+                    adminList.appendChild(newAdminBadge);
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to add admin'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add admin. See console for details.');
+            });
+        }
+        
+        // Remove an admin
+        function removeAdmin(userId) {
+            if (!confirm('Are you sure you want to remove this admin?')) return;
+            
+            const adminId = getCurrentAdminId();
+            fetch(`/api/admins?admin_id=${adminId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: userId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Refresh admin list
+                    fetchAdmins();
+                    
+                    // Update admin count
+                    const adminCount = document.getElementById('adminCount');
+                    adminCount.textContent = Math.max(0, parseInt(adminCount.textContent) - 1);
+                    
+                    // Remove from the overview admin list
+                    const adminBadges = document.querySelectorAll('#admin-list .admin-badge');
+                    adminBadges.forEach(badge => {
+                        if (badge.textContent.includes(userId)) {
+                            badge.remove();
+                        }
+                    });
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to remove admin'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to remove admin. See console for details.');
+            });
+        }
+        
+        // Fetch server information
+        function fetchServerInfo() {
+            const adminId = getCurrentAdminId();
+            fetch(`/api/server?admin_id=${adminId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Update server name in the overview
+                const serverNameElements = document.querySelectorAll('h2');
+                serverNameElements.forEach(element => {
+                    if (element.textContent.includes('Server Security Dashboard')) {
+                        element.textContent = `${data.name} - Security Dashboard`;
+                    }
+                });
+                
+                // Add server icon if available
+                if (data.icon_url) {
+                    const navBrand = document.querySelector('.navbar-brand');
+                    navBrand.innerHTML = `<img src="${data.icon_url}" alt="Server Icon" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;"> Anti-Raid & Anti-Nuke Bot`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching server info:', error);
+            });
+        }
+        
+        // Fetch server members
+        function fetchMembers() {
+            const adminId = getCurrentAdminId();
+            fetch(`/api/members?admin_id=${adminId}`)
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector('#membersTable tbody');
+                tbody.innerHTML = '';
+                
+                data.forEach(member => {
+                    const row = document.createElement('tr');
+                    
+                    // Format joined date
+                    const joinedDate = member.joined_at ? new Date(member.joined_at) : null;
+                    const joinedFormatted = joinedDate ? 
+                        joinedDate.toLocaleDateString() + ' ' + joinedDate.toLocaleTimeString() : 'N/A';
+                    
+                    // Format creation date
+                    const createdDate = new Date(member.created_at);
+                    const createdFormatted = createdDate.toLocaleDateString() + ' ' + createdDate.toLocaleTimeString();
+                    
+                    row.innerHTML = `
+                        <td>${member.avatar_url ? `<img src="${member.avatar_url}" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%;">` : '<div style="width: 30px; height: 30px; border-radius: 50%; background-color: #7289DA; display: flex; align-items: center; justify-content: center; color: white;">${member.display_name.charAt(0)}</div>'}</td>
+                        <td>${member.display_name}${member.bot ? ' <span class="badge rounded-pill badge-active">BOT</span>' : ''}</td>
+                        <td>${member.name}</td>
+                        <td>${member.roles.length} roles</td>
+                        <td>${joinedFormatted}</td>
+                        <td>${createdFormatted}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching members:', error);
+            });
+        }
+        
+        // Fetch server channels
+        function fetchChannels() {
+            const adminId = getCurrentAdminId();
+            fetch(`/api/channels?admin_id=${adminId}`)
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector('#channelsTable tbody');
+                tbody.innerHTML = '';
+                
+                // Create a map of category IDs to names
+                const categories = {};
+                data.filter(channel => channel.type.includes('category')).forEach(category => {
+                    categories[category.id] = category.name;
+                });
+                
+                data.forEach(channel => {
+                    const row = document.createElement('tr');
+                    
+                    // Get icon based on channel type
+                    let typeIcon = '<i class="fas fa-hashtag"></i>';
+                    let typeName = 'Text';
+                    
+                    if (channel.type.includes('voice')) {
+                        typeIcon = '<i class="fas fa-volume-up"></i>';
+                        typeName = 'Voice';
+                    } else if (channel.type.includes('category')) {
+                        typeIcon = '<i class="fas fa-folder"></i>';
+                        typeName = 'Category';
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${typeIcon} ${typeName}</td>
+                        <td>${channel.name}</td>
+                        <td>${channel.category_id ? categories[channel.category_id] || 'Unknown' : 'None'}</td>
+                        <td>${channel.position}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching channels:', error);
+            });
+        }
+        
+        // Fetch server roles
+        function fetchRoles() {
+            const adminId = getCurrentAdminId();
+            fetch(`/api/roles?admin_id=${adminId}`)
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector('#rolesTable tbody');
+                tbody.innerHTML = '';
+                
+                // Sort roles by position (highest first)
+                data.sort((a, b) => b.position - a.position);
+                
+                // Fetch members to count role members
+                fetch(`/api/members?admin_id=${adminId}`)
+                .then(response => response.json())
+                .then(members => {
+                    // Count members per role
+                    const roleMemberCounts = {};
+                    data.forEach(role => {
+                        roleMemberCounts[role.id] = 0;
+                    });
+                    
+                    members.forEach(member => {
+                        member.roles.forEach(roleId => {
+                            if (roleMemberCounts[roleId] !== undefined) {
+                                roleMemberCounts[roleId]++;
+                            }
+                        });
+                    });
+                    
+                    data.forEach(role => {
+                        const row = document.createElement('tr');
+                        
+                        // Convert decimal color to hex
+                        const colorHex = role.color ? '#' + role.color.toString(16).padStart(6, '0') : '#000000';
+                        
+                        row.innerHTML = `
+                            <td><div style="width: 20px; height: 20px; border-radius: 4px; background-color: ${colorHex};"></div></td>
+                            <td>${role.name}</td>
+                            <td>${roleMemberCounts[role.id] || 0}</td>
+                            <td>${role.position}</td>
+                            <td>${role.hoist ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>'}</td>
+                            <td>${role.mentionable ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>'}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching roles:', error);
+            });
+        }
+    </script>
+</body>
+</html>
